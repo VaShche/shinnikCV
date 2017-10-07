@@ -1,2 +1,4 @@
 /test/.idea/*
 /test/*.csv
+/test/.idea/*
+/build/*

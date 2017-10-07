@@ -49,13 +49,19 @@ int main(int argc, char * argv[]) {
     std::vector<Mat> roadSigns;
     detector.Process(image, roadSigns);
 
-    for (int i = 0; i < roadSigns.size(); ++i) {
-        Shinik::Sign  sign = classificator.Process(roadSigns[i]);
-        //print sign
-    }
-
-
     std::ofstream outFile(outputFile);
+
+#pragma omp parallel  for
+        for (int i = 0; i < roadSigns.size(); ++i) {
+            Shinik::Sign  sign = classificator.Process(roadSigns[i]);
+        #pragma omp critical
+            {
+            //print sign
+            }
+        }
+    
+
+
     outFile << "";
 
     return 0;
