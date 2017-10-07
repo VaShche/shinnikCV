@@ -1,8 +1,12 @@
+import datetime
 import unittest
 import configparser
 import subprocess
+import time
 
 import os
+
+import numpy
 
 typeimg = '.JPG'
 typeres = '.csv'
@@ -12,6 +16,7 @@ class Result(object):
 
     def __init__(self, base_path):
         self.in_files = []
+        self.times = []
         for f in os.listdir(base_path):
             if f.endswith(typeimg):
                 self.in_files.append(os.path.join(base_path, f))
@@ -55,23 +60,30 @@ class Wrapper(object):
         res = Result(self.base)
 
         for f in res.in_files:
-
+            t1 = datetime.datetime.now()
             proc = subprocess.call(self.exe_path + ' ' + f)
-        pass
+            t_delta = datetime.datetime.now() - t1
+            res.times.append(t_delta.total_seconds())
+
+        return res
 
 
 class SmokeTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         wrap = Wrapper('config.ini')
-        result = wrap.run()
+        cls.result = wrap.run()
         pass
 
     def test_something(self):
-        self.assertEqual(True, 0)
+        for f in self.result.res_files:
+            self.assertTrue(os.path.exists(f))
 
-    def test_speed(self):
-        pass
+    def test_speed_max(self):
+        self.assertLessEqual(max(self.result.times), 0.7)
+
+    def test_speed_mean(self):
+        self.assertLessEqual(numpy.mean(self.result.times), 0.5)
 
     def test_perfomance(self):
         pass
