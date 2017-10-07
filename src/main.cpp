@@ -46,6 +46,9 @@ int main(int argc, char * argv[]) {
     Shinik::ClassificatorRoadSign classificator;
     classificator.Init("D:/Education/Programming/HackCV/rtsd-r3");
 
+	classificator.Predict("D:/Education/Programming/HackCV/rtsd-r3");
+
+
     std::vector<Mat> roadSigns;
     detector.Process(image, roadSigns);
 

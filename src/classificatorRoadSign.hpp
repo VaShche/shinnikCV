@@ -17,7 +17,10 @@ namespace Shinik {
     public:
 		int Init(const std::string& path);
 
-        Sign Process(const Mat& imageSign) const;
+		Sign Process(const Mat& imageSign) const;
+
+		int Predict(const std::string & dir) const;
+
 
     };
 };
