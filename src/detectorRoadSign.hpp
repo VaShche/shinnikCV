@@ -7,15 +7,13 @@
 using namespace cv;
 
 namespace Shinik {
-    struct Sign {
-        //TODO: поля дописать
-    };
+
 
     class DetectorRoadSign {
     public:
        int Init(const std::string& path);
 
-       Sign Process(const Mat& image, std::vector<Mat>& outSign) const;
+       int Process(const Mat& image, std::vector<Mat>& outSign) const;
 
     };
 
