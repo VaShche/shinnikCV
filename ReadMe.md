@@ -1,5 +1,5 @@
-перед запуском create_project.bat
-нужно  установить переменную  среды OpenCV_Dir
+п»їРїРµСЂРµРґ Р·Р°РїСѓСЃРєРѕРј create_project.bat
+РЅСѓР¶РЅРѕ  СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РїРµСЂРµРјРµРЅРЅСѓСЋ  СЃСЂРµРґС‹ OpenCV_Dir
 
-пример 
+РїСЂРёРјРµСЂ 
 set OpenCV_Dir=C:\Users\Kozlov\Downloads\opencv\build
