@@ -15,13 +15,19 @@ namespace Shinik {
 
     class ClassificatorRoadSign {
     public:
-		int Init(const std::string& path);
+		ClassificatorRoadSign(){}
+
+		ClassificatorRoadSign(const std::string& path)
+			:m_svm_dir(path) {}
+
+		int Train();
 
 		Sign Process(const Mat& imageSign) const;
 
-		int Predict(const std::string & dir) const;
+		int Predict() const;
 
-
+	private:
+		std::string m_svm_dir="";
     };
 };
 #endif //__CLASSIFICATOR_ROAD_SIGN_HPP__
