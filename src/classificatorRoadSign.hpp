@@ -5,6 +5,7 @@
 
 #include <opencv2/core/core.hpp>
 #include <string>
+
 using namespace cv;
 
 namespace Shinik {
@@ -14,7 +15,7 @@ namespace Shinik {
 
     class ClassificatorRoadSign {
     public:
-        int Init(const std::string& path);
+		int Init(const std::string& path);
 
         Sign Process(const Mat& imageSign) const;
 
