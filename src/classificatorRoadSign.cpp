@@ -6,8 +6,10 @@ int Shinik::ClassificatorRoadSign::Init(const std::string& path) {
     return 0;
 }
 
-int  Shinik::ClassificatorRoadSign::Process(const Mat& image, std::vector<Mat>& outSign ) const {
+Shinik::Sign Shinik::ClassificatorRoadSign::Process(const Mat& imageSign ) const {
     //TODO:
-    return 0;
+    Shinik::Sign res;
+
+    return res;
 
 }

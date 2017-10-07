@@ -8,11 +8,15 @@
 using namespace cv;
 
 namespace Shinik {
+    struct Sign {
+        //TODO: поля дописать
+    };
+
     class ClassificatorRoadSign {
     public:
         int Init(const std::string& path);
 
-        int Process(const Mat& image, std::vector<Mat>& outSign) const;
+        Sign Process(const Mat& imageSign) const;
 
     };
 };
