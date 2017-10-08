@@ -103,6 +103,33 @@ Shinik::Sign Shinik::ClassificatorRoadSign::Process(const Mat& imageSign) const 
 	Mat image32;
 	cv::resize(imageSign, image32, size);//resize image
 
+	std::cout << "check if is temporary sign" << std::endl;
+	Mat hsv;
+	cvtColor(image32, hsv, CV_BGR2HSV);
+		
+	/// Establish the number of bins
+	int histSize = 180;
+
+	/// Set the ranges ( for B,G,R) )
+	float range[] = { 0, 179 };
+	const float* histRange = { range };
+
+	bool uniform = true; bool accumulate = false;
+
+	Mat h_hist;
+	std::vector<Mat> hsv_vector;
+	split(hsv, hsv_vector);
+	calcHist(&hsv_vector[0], 1, 0, Mat(), h_hist, 1, &histSize, &histRange, uniform, accumulate);
+
+	double maxVal = 0;
+	cv::Point max_id;
+	minMaxLoc(h_hist, 0, &maxVal, 0, &max_id);
+	int yellow_value = max_id.y;
+	if (yellow_value >= 7 && yellow_value <= 34) {
+		//TODO: compare with signs categories witch could be temporary (1.*, 3.*, 6.17, 6.18, 6.19)
+		std::cout << "TEMPORARY SIGN" << std::endl;
+	}
+
 	const Size winSize(32, 32);
 	const Size blockSize(16, 16);
 	const Size blockStride(8, 8);

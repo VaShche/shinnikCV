@@ -19,9 +19,7 @@ std::string getOutputFilename(const std::string& inputFilename) {
     outputFile = outputFile + std::string(".csv");
 
     return outputFile;
-
 }
-
 
 int main(int argc, char * argv[]) {
     if (argc != 2)
@@ -60,8 +58,6 @@ int main(int argc, char * argv[]) {
             }
         }
     
-
-
     outFile << "";
 
     return 0;
