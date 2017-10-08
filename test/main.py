@@ -8,7 +8,7 @@ import os
 
 import numpy
 
-typeimg = '.JPG'
+typeimg = '.png'
 typeres = '.csv'
 
 
@@ -61,11 +61,14 @@ class Result(object):
     def find(self, test_metric, ideal_seg_path):
         with open(ideal_seg_path, 'r') as f:
             ideals = f.readlines()[1:]
+        res = None
         for ideal in ideals:
             m_i = Metric(ideal)
             if test_metric == m_i:
-                return m_i
-        return None
+                res = m_i
+                if m_i.info == test_metric.info:
+                    return m_i
+        return res
 
     def get_metrics(self):
         for x, v in enumerate(self.res_files):
@@ -74,8 +77,8 @@ class Result(object):
                     for l in f.readlines()[1:]:
                         m = Metric(l)
                         id = self.find(m, self.seg_files[x])
+                        name = v + ';' + l
                         if id:
-                            name = v + ';' + l
                             self.true_class.append(name)
                             if m.temp == id.temp:
                                 self.true_with_temp.append(name)
@@ -123,9 +126,10 @@ class Wrapper(object):
     def __init__(self, config_path):
         conf = configparser.ConfigParser()
         conf.add_section('DEF')
-        conf.set('DEF', 'exe', 'python exe.py')
-        conf.set('DEF', 'ideal', os.path.join('data', 'ideal'))
-        conf.set('DEF', 'base', os.path.join('data', 'base'))
+
+        conf.set('DEF', 'exe', r'..\classificator_test_exe\build\Release\Shinik.exe')         #'python exe.py'
+        conf.set('DEF', 'ideal', os.path.join('data', 'ideal_crop'))
+        conf.set('DEF', 'base', os.path.join('data', 'base_crop'))
         #conf.set('DEF', 'res', os.path.join('out', 'result.csv'))
 
         with open(config_path, 'w') as conf_f:
@@ -135,7 +139,7 @@ class Wrapper(object):
             conf.read(conf_f)
 
         self.exe_path = conf.get('DEF', 'exe')
-        self.res_path = r'C:\PROJECTS\hackCV\shinnik\test' #os.path.dirname(self.exe_path)
+        self.res_path = os.path.dirname(self.exe_path) #r'C:\PROJECTS\hackCV\shinnik\test' #
         self.base = conf.get('DEF', 'base')
         self.ideal = conf.get('DEF', 'ideal')
 
@@ -151,6 +155,7 @@ class Wrapper(object):
 
         for f in res.in_files:
             t1 = datetime.datetime.now()
+            print(self.exe_path + ' ' + f)
             proc = subprocess.call(self.exe_path + ' ' + f)
             t_delta = datetime.datetime.now() - t1
             res.times.append(t_delta.total_seconds())
@@ -187,26 +192,26 @@ class SmokeTestCase(unittest.TestCase):
         print(self.result.false_class)
         print('CLASS PRECISION: ' + str(precision))
         print('CLASS RECALL: ' + str(recall))
-        self.assertGreaterEqual(precision, 0.9)
-        self.assertGreaterEqual(recall, 0.9)
+        self.assertEqual(precision, 1.0)
+        self.assertEqual(recall, 1.0)
 
     def test_class_temp_perfomance(self):
-        recall = len(self.result.true_with_temp)*1.0/self.result.get_total_temp_signs()
+        recall = len(self.result.true_with_temp)*1.0/self.result.get_total_signs()
         precision = len(self.result.true_with_temp) * 1.0 / (len(self.result.true_with_temp) + len(self.result.false_with_temp))
         print(self.result.false_with_temp)
-        print('CLASS PRECISION: ' + str(precision))
-        print('CLASS RECALL: ' + str(recall))
-        self.assertGreaterEqual(precision, 0.9)
-        self.assertGreaterEqual(recall, 0.9)
+        print('CLASS TEMP PRECISION: ' + str(precision))
+        print('CLASS TEMP RECALL: ' + str(recall))
+        self.assertEqual(precision, 1.0)
+        self.assertEqual(recall, 1.0)
 
     def test_class_info_perfomance(self):
-        recall = len(self.result.true_with_info)*1.0/self.result.get_total_addinfo_signs()
+        recall = len(self.result.true_with_info)*1.0/self.result.get_total_signs()
         precision = len(self.result.true_with_info) * 1.0 / (len(self.result.true_with_info) + len(self.result.false_with_info))
         print(self.result.false_with_info)
-        print('CLASS PRECISION: ' + str(precision))
-        print('CLASS RECALL: ' + str(recall))
-        self.assertGreaterEqual(precision, 0.9)
-        self.assertGreaterEqual(recall, 0.9)
+        print('CLASS INFO PRECISION: ' + str(precision))
+        print('CLASS INFO RECALL: ' + str(recall))
+        self.assertEqual(precision, 1.0)
+        self.assertEqual(recall, 1.0)
 
 
 
