@@ -1,4 +1,4 @@
-
+import shutil
 import time
 
 import sys
@@ -28,9 +28,10 @@ def devide():
         f.writelines(lines)
 
 if __name__ == '__main__':
-    devide()
+    #devide()
     if len(sys.argv) > 1:
-        time.sleep(0.5)
+        #time.sleep(0.1)
         print(sys.argv[1].replace('.JPG', '.csv'))
-        with open(os.path.basename(sys.argv[1].replace('.JPG', '.csv')), 'w') as f:
-            f.write('zzz')
+        shutil.copy(os.path.join('data', 'ideal', os.path.basename(sys.argv[1].replace('JPG', 'csv'))),
+                    os.path.basename(sys.argv[1].replace('.JPG', '.csv')))
+
