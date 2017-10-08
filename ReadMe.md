@@ -1,13 +1,14 @@
-﻿перед запуском create_project.bat
-нужно  установить переменную  среды OpenCV_Dir
+# Инструкция по сборке
 
-пример 
-set OpenCV_Dir=C:\Users\Kozlov\Downloads\opencv\build
+## Пререквизиты
+* установка  openCV
+* добавить переменную среды OpenCV_Dir (пример: set OpenCV_Dir=C:\Users\Kozlov\Downloads\opencv\build )
 
-входной параметр - путь к изображению
+## Сборка проекта
+* зупустить create_project.bat
+* в  папке build появится solution HackCV.sln
+* собрать solution 
 
-для проверки работы классификатора:
-1) передать в конструктор путь к папке rtsd-r3 из архива с google drive.
-2) раскомментировать и запустить Train() для создания SVM
-3) обработать входное изображению функцией Process
-
+## Использование
+архив data/data.zip распаковать рядом с исполняемым файлом Shinik.exe
+аргумент командной строки: путь к изображению. пример: Shinik.exe example.jpg
