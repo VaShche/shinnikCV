@@ -6,6 +6,7 @@
 #include <opencv2/core/core.hpp>
 #include <string>
 #include <map>
+#include <opencv2/ml.hpp>
 
 using namespace cv;
 
@@ -18,8 +19,11 @@ namespace Shinik {
 		Rectangle(const int _x1, const  int _y1, const int _x2, const  int _y2)
 			: x1(_x1), y1(_y1), x2(_x2), y2(_y2) {}
 
+		Rectangle(const cv::Rect &rect)
+			: x1(rect.x), y1(rect.y), x2(rect.x + rect.width), y2(rect.y + rect.height) {}
+
 		std::string to_csv() {
-			return std::to_string(x1) + "," + std::to_string(y2) + "," + std::to_string(x2) + "," + std::to_string(y2);
+			return std::to_string(x1) + "," + std::to_string(y1) + "," + std::to_string(x2) + "," + std::to_string(y2);
 		}
 
 		int x1;
@@ -53,16 +57,19 @@ namespace Shinik {
     public:
 		ClassificatorRoadSign(){}
 
-		ClassificatorRoadSign(const std::string& path)
-			:m_svm_dir(path) {}
+		ClassificatorRoadSign(const std::string& path);
 
-		int Train();
+		void Train() const;
+
+		void Predict() const;
 
 		Sign Process(const Mat& imageSign) const;
 
-		int Predict() const;
 
 	private:
+
+		Ptr<ml::SVM> svm;
+
 		std::string m_svm_dir;
 
 		std::map<int, std::string> additional_info = {

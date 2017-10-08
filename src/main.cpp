@@ -40,27 +40,28 @@ int main(int argc, char * argv[]) {
         cout << "Could not open or find the image" << std::endl;
         return -2;
     }
+	std::cout << "run detector" << std::endl;
     Shinik::DetectorRoadSign detector;
     detector.Init("./");
 
-    Shinik::ClassificatorRoadSign classificator("D:/Education/Programming/HackCV/rtsd-r3");
+    Shinik::ClassificatorRoadSign classificator("data");
     //classificator.Train();
 
-    std::vector<Mat> roadSigns;
-    detector.Process(image, roadSigns);
+	std::vector<cv::Rect> detected_bounding_box;
+    detector.Process(image, detected_bounding_box);
 
-	std::vector<Shinik::Sign> detectedSigns;
-	detectedSigns.resize(roadSigns.size());
 	std::ofstream outFile(outputFile);
-	outFile << inputFile << ";" << to_string(roadSigns.size()) << std::endl;
+	outFile << inputFile << ";" << to_string(detected_bounding_box.size()) << std::endl;
 
 #pragma omp parallel  for
-        for (int i = 0; i < roadSigns.size(); ++i) {
-			detectedSigns[i] = classificator.Process(roadSigns[i]);
+	for (int i = 0; i < detected_bounding_box.size(); i++) {
+			cv::Mat ROI = image(detected_bounding_box[i]);
+			Shinik::Sign detectedSign = classificator.Process(ROI);
 
+			detectedSign.bound = Shinik::Rectangle(detected_bounding_box[i]);
         #pragma omp critical
             {
-				outFile << detectedSigns[i].to_csv() << std::endl;
+				outFile << detectedSign.to_csv() << std::endl;
             //print sign
             }
         }

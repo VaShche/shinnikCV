@@ -29,7 +29,7 @@ namespace Shinik {
         DetectorRoadSign();
        int Init(const std::string& path);
 
-       int Process(const Mat& image, std::vector<Mat>& outSign) const;
+       int Process(const Mat& image, std::vector<Rect>& outROIs) const;
 
 
        const unsigned long upsample_amount = 0;

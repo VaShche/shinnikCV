@@ -25,14 +25,13 @@ int Shinik::DetectorRoadSign::Init(const std::string& path) {
 
     // Load SVM detectors
     std::vector<TrafficSign> signs;
+	std::cout << "detector: load config files" << std::endl;
     signs.push_back(TrafficSign("blue_border", "data/blue_border.svm", rgb_pixel(255, 0, 0)));
     signs.push_back(TrafficSign("blue_rect", "data/blue_rect.svm", rgb_pixel(0, 255, 0)));
     signs.push_back(TrafficSign("danger", "data/danger.svm", rgb_pixel(0, 0, 255)));
     signs.push_back(TrafficSign("main_road", "data/main_road.svm", rgb_pixel(128, 0, 128)));
     signs.push_back(TrafficSign("mandatory", "data/mandatory.svm", rgb_pixel(0, 128, 128)));
     signs.push_back(TrafficSign("prohibitory", "data/prohibitory.svm", rgb_pixel(128, 128, 0)));
-
-
 
     for (int i = 0; i < signs.size(); i++) {
         object_detector<image_scanner_type> detector;
@@ -53,7 +52,7 @@ int Shinik::DetectorRoadSign::Init(const std::string& path) {
     return 0;
 }
 
-int Shinik::DetectorRoadSign::Process(const Mat& cv_image, std::vector<Mat>& outSign) const {
+int Shinik::DetectorRoadSign::Process(const Mat& cv_image, std::vector<Rect>& outROIs) const {
 
     cv::Mat cv_image_gray;
     cv::cvtColor(cv_image, cv_image_gray, cv::COLOR_BGR2GRAY);
@@ -70,11 +69,13 @@ int Shinik::DetectorRoadSign::Process(const Mat& cv_image, std::vector<Mat>& out
     std::vector<rect_detection> rects;
     evaluate_detectors(detectors, dlib_image, rects, 0.5f);
 
-    std::vector<cv::Rect> res;
+	std::cout << "detections count " << rects.size() << std::endl;
+
+    //std::vector<cv::Rect> res;
     for (int i = 0; i < rects.size(); ++i) {
         
         rect_detection&  r = rects[i];
-        res.push_back(cv::Rect (cv::Point2i(r.rect.left(), r.rect.top()), cv::Point2i(r.rect.right() + 1, r.rect.bottom() + 1)));
+		outROIs.push_back(cv::Rect (cv::Point2i(r.rect.left(), r.rect.top()), cv::Point2i(r.rect.right() + 1, r.rect.bottom() + 1)));
         
     }
     //return res;
