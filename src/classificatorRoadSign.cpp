@@ -116,9 +116,15 @@ Shinik::Sign Shinik::ClassificatorRoadSign::Process(const Mat& imageSign) const 
 	const int predicted_class = std::round(svm->predict(features));
 	std::cout << "Predicted sign class: " << " " << predicted_class << std::endl;
 
-	//TODO: convert predicted_class to Sign
-	result.sign_id = std::to_string(predicted_class);
+	if (predicted_class < 0 || predicted_class > 105) {
+		std::cerr << "Invalid predicted class id." << std::endl;
+	}
+	result.sign_id = class_sign.at(predicted_class);
 
+	if (additional_info.find(predicted_class) != additional_info.end()) {
+		result.add_info = additional_info.at(predicted_class);
+		result.has_add_info = true;
+	}
 
 	std::cout << "check if the sign is temporary" << std::endl;
 	Mat hsv;

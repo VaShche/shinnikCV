@@ -1,10 +1,12 @@
+
+#include "detectorRoadSign.hpp"
+#include "classificatorRoadSign.hpp"
 #include <iostream>
 #include <fstream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "classificatorRoadSign.hpp"
-#include "detectorRoadSign.hpp"
+
 
 using namespace cv;
 using namespace std;
