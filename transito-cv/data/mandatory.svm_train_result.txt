@@ -1,0 +1,5 @@
+precision, recall, average_precision
+training results: 0.967105 0.816667 0.814542 
+
+testing results:  0.710526 0.465517  0.39475 
+
