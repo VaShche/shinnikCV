@@ -47,18 +47,23 @@ int main(int argc, char * argv[]) {
     std::vector<Mat> roadSigns;
     detector.Process(image, roadSigns);
 
-    std::ofstream outFile(outputFile);
+	std::vector<Shinik::Sign> detectedSigns;
+	detectedSigns.resize(roadSigns.size());
+	std::ofstream outFile(outputFile);
+	outFile << inputFile << ";" << to_string(roadSigns.size()) << std::endl;
 
 #pragma omp parallel  for
         for (int i = 0; i < roadSigns.size(); ++i) {
-            Shinik::Sign  sign = classificator.Process(roadSigns[i]);
+			detectedSigns[i] = classificator.Process(roadSigns[i]);
+
         #pragma omp critical
             {
+				outFile << detectedSigns[i].to_csv() << std::endl;
             //print sign
             }
         }
-    
-    outFile << "";
+
+	outFile.close();
 
     return 0;
 }

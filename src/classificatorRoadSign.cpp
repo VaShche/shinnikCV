@@ -85,7 +85,8 @@ int Shinik::ClassificatorRoadSign::Train() {
 }
 
 Shinik::Sign Shinik::ClassificatorRoadSign::Process(const Mat& imageSign) const {
-	
+	Sign result;
+
 	if (m_svm_dir.empty()) {
 		std::cerr << "Classificator is not trained. Cannot process file. Train classificator before using it." << std::endl;
 		return {};
@@ -103,33 +104,6 @@ Shinik::Sign Shinik::ClassificatorRoadSign::Process(const Mat& imageSign) const 
 	Mat image32;
 	cv::resize(imageSign, image32, size);//resize image
 
-	std::cout << "check if is temporary sign" << std::endl;
-	Mat hsv;
-	cvtColor(image32, hsv, CV_BGR2HSV);
-		
-	/// Establish the number of bins
-	int histSize = 180;
-
-	/// Set the ranges ( for B,G,R) )
-	float range[] = { 0, 179 };
-	const float* histRange = { range };
-
-	bool uniform = true; bool accumulate = false;
-
-	Mat h_hist;
-	std::vector<Mat> hsv_vector;
-	split(hsv, hsv_vector);
-	calcHist(&hsv_vector[0], 1, 0, Mat(), h_hist, 1, &histSize, &histRange, uniform, accumulate);
-
-	double maxVal = 0;
-	cv::Point max_id;
-	minMaxLoc(h_hist, 0, &maxVal, 0, &max_id);
-	int yellow_value = max_id.y;
-	if (yellow_value >= 7 && yellow_value <= 34) {
-		//TODO: compare with signs categories witch could be temporary (1.*, 3.*, 6.17, 6.18, 6.19)
-		std::cout << "TEMPORARY SIGN" << std::endl;
-	}
-
 	const Size winSize(32, 32);
 	const Size blockSize(16, 16);
 	const Size blockStride(8, 8);
@@ -139,13 +113,38 @@ Shinik::Sign Shinik::ClassificatorRoadSign::Process(const Mat& imageSign) const 
 	cv::HOGDescriptor hog(winSize, blockSize, blockStride, cellSize, nbins);
 	hog.compute(image32, features);
 
-	const float predicted_class = svm->predict(features);
+	const int predicted_class = std::round(svm->predict(features));
 	std::cout << "Predicted sign class: " << " " << predicted_class << std::endl;
 
 	//TODO: convert predicted_class to Sign
+	result.sign_id = std::to_string(predicted_class);
 
-	Sign sign;
-	return sign;
+
+	std::cout << "check if the sign is temporary" << std::endl;
+	Mat hsv;
+	cvtColor(image32, hsv, CV_BGR2HSV);
+
+	Mat h_hist;
+	std::vector<Mat> hsv_vector;
+	split(hsv, hsv_vector);
+	const int histSize = 180;
+	const float range[] = { 0, 179 };
+	const float* histRange = { range };
+	calcHist(&hsv_vector[0], 1, 0, Mat(), h_hist, 1, &histSize, &histRange, true, false);
+
+	double maxVal = 0;
+	cv::Point max_id;
+	minMaxLoc(h_hist, 0, &maxVal, 0, &max_id);
+	int yellow_value = max_id.y;
+	if (yellow_value >= 7 && yellow_value <= 34) {
+		if ((predicted_class >= 0 && predicted_class <= 23)				// sign number 1.*
+			|| (predicted_class >= 31 && predicted_class <= 56)) {		// sign number 3.*
+			std::cout << "temporary sign" << std::endl;
+			result.is_temporary = true;
+		}
+	}
+
+	return result;
 }
 
 int Shinik::ClassificatorRoadSign::Predict() const {
