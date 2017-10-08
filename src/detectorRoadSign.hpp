@@ -14,7 +14,7 @@
 #include <opencv2/core/core.hpp>
 #include <string>
 
-#include "CNTKLibrary.h"
+//#include "CNTKLibrary.h"
 
 using namespace cv;
 using namespace std;
@@ -39,8 +39,8 @@ namespace Shinik {
 
        std::vector<object_detector<image_scanner_type> > detectors;
 
-       CNTK::DeviceDescriptor device;
-       CNTK::FunctionPtr RTSD_model;
+       //CNTK::DeviceDescriptor device;
+       //CNTK::FunctionPtr RTSD_model;
     };
 
 };

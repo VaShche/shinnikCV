@@ -15,8 +15,9 @@ struct TrafficSign {
         name(name), svm_path(svm_path), color(color) {};
 };
 
-Shinik::DetectorRoadSign::DetectorRoadSign() :
-    device(CNTK::DeviceDescriptor::CPUDevice()) {
+Shinik::DetectorRoadSign::DetectorRoadSign() //:
+    //device(CNTK::DeviceDescriptor::CPUDevice()) 
+{
 
 }
 
@@ -41,9 +42,13 @@ int Shinik::DetectorRoadSign::Init(const std::string& path) {
 
     //Load CNTK model
     std::wstring model_path = L"data/RTSD_CNN.model";
-    
-    RTSD_model = CNTK::Function::Load(model_path, device);
-
+    try {
+    //    RTSD_model = CNTK::Function::Load(model_path, device);
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what()<< std::endl;
+    }
 
     return 0;
 }
@@ -65,7 +70,16 @@ int Shinik::DetectorRoadSign::Process(const Mat& cv_image, std::vector<Mat>& out
     std::vector<rect_detection> rects;
     evaluate_detectors(detectors, dlib_image, rects, 0.5f);
 
-    for (auto r : rects) {
+    std::vector<cv::Rect> res;
+    for (int i = 0; i < rects.size(); ++i) {
+        
+        rect_detection&  r = rects[i];
+        res.push_back(cv::Rect (cv::Point2i(r.rect.left(), r.rect.top()), cv::Point2i(r.rect.right() + 1, r.rect.bottom() + 1)));
+        
+    }
+    //return res;
+
+    /*for (auto r : rects) {
         cv::Rect rect(cv::Point2i(r.rect.left(), r.rect.top()), cv::Point2i(r.rect.right() + 1, r.rect.bottom() + 1));
         cv::Mat img_crop = cv_image(rect);
         cv::Mat img_crop_resize;
@@ -97,7 +111,7 @@ int Shinik::DetectorRoadSign::Process(const Mat& cv_image, std::vector<Mat>& out
 
         printf("rect: (%d, %d, %d, %d); arg_max: %d\n", rect.x, rect.y, rect.width, rect.height, arg_max);
     }
-
+    */
     //outSign.push_back(image);
 
     return 0;
